@@ -5,24 +5,24 @@ import java.util.Scanner;
 
 public class GuessingGame {
     public static void main(String[] args) {
+        Random random = new Random();
+        int myNumber = 1 + random.nextInt(10);
         Scanner scan = new Scanner(System.in);
         System.out.println("Guess number from 1 to 10:");
         int userGuess = scan.nextInt();
-        guessing(userGuess);
-    }
-
-    static void guessing(int guess) {
-        Random random = new Random();
-        int myNumber = 1 + random.nextInt(10);
-        if(guess <0 || guess > 10){
-            System.out.println("Invalid input. You can choose number from 1 to 10.");
+        if (userGuess < 1 || userGuess > 10) {
+            System.out.println("You can choose number from 0 to 10.");
         }
-        else {
-            if (guess == myNumber) {
-                System.out.println("WINNER!");
-            } else {
-                System.out.println("Oh no! The correct number was " + myNumber + ".");
+        while (userGuess != myNumber) {
+            if (userGuess < myNumber) {
+                System.out.println("My number is greater than your guess.");
             }
+            if (userGuess > myNumber) {
+                System.out.println("My number is lower than your guess.");
+            }
+            System.out.println("Try again: ");
+            userGuess = scan.nextInt();
         }
+        System.out.println("Winner!");
     }
 }
