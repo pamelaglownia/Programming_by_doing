@@ -6,12 +6,12 @@ public class CountingMachine {
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         System.out.print("Count from: ");
-        int fromCount = scan.nextInt();
+        double fromCount = scan.nextDouble();
         System.out.print("Count to: ");
-        int toCount = scan.nextInt();
+        double toCount = scan.nextDouble();
         System.out.print("Count by: ");
-        int byCount = scan.nextInt();
-        for (int i = fromCount; i <= toCount; i += byCount) {
+        double byCount = scan.nextDouble();
+        for (double i = fromCount; i <= toCount; i += byCount) {
             System.out.print(i + " ");
         }
     }
