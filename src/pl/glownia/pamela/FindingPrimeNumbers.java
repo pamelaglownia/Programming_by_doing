@@ -2,12 +2,10 @@ package pl.glownia.pamela;
 
 public class FindingPrimeNumbers {
     public static void main(String[] args) {
-        for (int n = 2; n <= 20; n++) {
-            System.out.print(n);
+        for (int n = 2; n <= 100; n++) {
             if (isPrime(n)) {
-                System.out.print(" <");
+                System.out.println(n);
             }
-            System.out.println();
         }
     }
 
