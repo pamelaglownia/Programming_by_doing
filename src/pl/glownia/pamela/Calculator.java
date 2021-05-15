@@ -9,9 +9,23 @@ public class Calculator {
         double a, b, c;
         String op;
         do {
-            System.out.print("> ");
+            System.out.print("Number> ");
+            while (!keyboard.hasNextDouble()) {
+                System.out.println("Invalid value. Type a number:");
+                keyboard.next();
+            }
             a = keyboard.nextDouble();
+            System.out.print("Operator> ");
             op = keyboard.next();
+            while (!(op.equals("+") || op.equals("-") || op.equals("*") || op.equals("/") || op.equals("^") || op.equals("%"))) {
+                System.out.println("Invalid value. Type an operator [+, -, *, /, ^, %]:");
+                op = keyboard.next();
+            }
+            System.out.print("Number> ");
+            while (!keyboard.hasNextDouble()) {
+                System.out.println("Invalid value. Type a number:");
+                keyboard.next();
+            }
             b = keyboard.nextDouble();
             if (op.equals("+")) {
                 c = add(a, b);
@@ -28,12 +42,8 @@ public class Calculator {
             else if (op.equals("^")) {
                 c = power(a, b);
             }
-            else if (op.equals("%")) {
+            else{
                 c = modulus(a, b);
-            }
-            else {
-                System.out.println("Undefined operator: '" + op + "'.");
-                c = 0;
             }
             System.out.println(c);
         } while (a != 0);
