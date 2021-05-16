@@ -9,19 +9,16 @@ public class Calculator {
         double a, b, c;
         String op;
         do {
-            System.out.print("Number> ");
             while (!keyboard.hasNextDouble()) {
                 System.out.println("Invalid value. Type a number:");
                 keyboard.next();
             }
             a = keyboard.nextDouble();
-            System.out.print("Operator> ");
             op = keyboard.next();
             while (!(op.equals("+") || op.equals("-") || op.equals("*") || op.equals("/") || op.equals("^") || op.equals("%"))) {
                 System.out.println("Invalid value. Type an operator [+, -, *, /, ^, %]:");
                 op = keyboard.next();
             }
-            System.out.print("Number> ");
             while (!keyboard.hasNextDouble()) {
                 System.out.println("Invalid value. Type a number:");
                 keyboard.next();
@@ -29,20 +26,15 @@ public class Calculator {
             b = keyboard.nextDouble();
             if (op.equals("+")) {
                 c = add(a, b);
-            }
-            else if (op.equals("-")) {
+            } else if (op.equals("-")) {
                 c = subtract(a, b);
-            }
-            else if (op.equals("*")) {
+            } else if (op.equals("*")) {
                 c = multiply(a, b);
-            }
-            else if (op.equals("/")) {
+            } else if (op.equals("/")) {
                 c = divide(a, b);
-            }
-            else if (op.equals("^")) {
+            } else if (op.equals("^")) {
                 c = power(a, b);
-            }
-            else{
+            } else {
                 c = modulus(a, b);
             }
             System.out.println(c);
