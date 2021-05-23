@@ -12,11 +12,14 @@ public class FindingTheLargestValueInAnArray {
             System.out.print(array[i] + " ");
         }
         int max = array[0];
+        int location = 0;
         for (int i = 0; i < array.length; i++) {
             if (array[i] > max) {
                 max = array[i];
+                location = i;
             }
         }
         System.out.println("\nThe largest value is " + max);
+        System.out.println("It is in a slot " + location);
     }
 }
