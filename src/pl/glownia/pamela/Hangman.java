@@ -1,6 +1,7 @@
 package pl.glownia.pamela;
 
 import java.util.Random;
+import java.util.Scanner;
 
 public class Hangman {
     public static void main(String[] args) {
@@ -10,12 +11,16 @@ public class Hangman {
 
         System.out.println("\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
         System.out.print("Word: ");
-        hideLetters(charArray);
+        hideWord(charArray);
         System.out.print("\nMisses: ");
+        char guess = userGuess();
+
     }
 
-    public static void hideLetters(char[] charArray) {
+
+    public static void hideWord(char[] charArray) {
         for (int i = 0; i < charArray.length; i++) {
+
             charArray[i] = '-';
             System.out.print(charArray[i]);
         }
@@ -25,8 +30,15 @@ public class Hangman {
         Random random = new Random();
         int randomIndex = random.nextInt(6);
         String randomWord = array[randomIndex];
-        //to check if hidden word has the same letters quantity
         System.out.println(randomWord);
         return randomWord;
+    }
+
+    public static char userGuess() {
+        System.out.print("\nGuess: ");
+        Scanner scan = new Scanner(System.in);
+        char guess = scan.next().charAt(0);
+        System.out.println(guess);
+        return guess;
     }
 }
