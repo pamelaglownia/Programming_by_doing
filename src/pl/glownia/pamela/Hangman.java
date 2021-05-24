@@ -14,9 +14,8 @@ public class Hangman {
         hideWord(charArray);
         System.out.print("\nMisses: ");
         char guess = userGuess();
-
+        checkLetter(randomWord, charArray, guess);
     }
-
 
     public static void hideWord(char[] charArray) {
         for (int i = 0; i < charArray.length; i++) {
@@ -38,7 +37,19 @@ public class Hangman {
         System.out.print("\nGuess: ");
         Scanner scan = new Scanner(System.in);
         char guess = scan.next().charAt(0);
-        System.out.println(guess);
         return guess;
+    }
+
+    public static char[] checkLetter(String randomWord, char[] hiddenWord, char guess) {
+        for (int i = 0; i < randomWord.length(); i++) {
+            if (randomWord.charAt(i) == guess) {
+                hiddenWord[i] = guess;
+                System.out.print(hiddenWord[i]);
+            } else {
+                hiddenWord[i] = '-';
+                System.out.print('-');
+            }
+        }
+        return hiddenWord;
     }
 }
