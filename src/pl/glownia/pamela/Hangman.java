@@ -8,17 +8,21 @@ public class Hangman {
         String[] fruitWords = {"cranberry", "watermelon", "orange", "pineapple", "strawberry", "grapefruit"};
         String randomWord = getRandomWord(fruitWords);
         char[] charArray = randomWord.toCharArray();
-        int chances = 7;
+        int tries = 0;
         char guess;
         char[] hiddenWord = hideWord(charArray);
-        while (chances >= 0) {
+        char[] supportArray = new char[randomWord.length()];
+        char[] misses = hideMissedLetters(supportArray);
+
+        while (tries < randomWord.length()) {
             System.out.println("\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
             System.out.print("Word: ");
             System.out.println(new String(hiddenWord));
             System.out.print("Misses: ");
+            System.out.println(new String(misses));
             guess = userGuess();
             checkLetter(randomWord, hiddenWord, guess);
-            chances -= 1;
+            tries = addMissingLetter(randomWord, guess, misses, tries);
         }
     }
 
@@ -27,6 +31,13 @@ public class Hangman {
             charArray[i] = '-';
         }
         return charArray;
+    }
+
+    public static char[] hideMissedLetters(char[] supportArray) {
+        for (int i = 0; i < supportArray.length; i++) {
+            supportArray[i] = ' ';
+        }
+        return supportArray;
     }
 
     public static String getRandomWord(String[] array) {
@@ -38,7 +49,7 @@ public class Hangman {
     }
 
     public static char userGuess() {
-        System.out.print("\nGuess: ");
+        System.out.print("Guess: ");
         Scanner scan = new Scanner(System.in);
         return scan.next().charAt(0);
     }
@@ -49,5 +60,13 @@ public class Hangman {
                 hiddenWord[i] = guess;
             }
         }
+    }
+
+    public static int addMissingLetter(String randomWord, char guess, char[] misses, int tries) {
+        if (!(randomWord.contains(String.valueOf(guess)))) {
+            misses[tries] = guess;
+            tries += 1;
+        }
+        return tries;
     }
 }
