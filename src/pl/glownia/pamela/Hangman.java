@@ -8,21 +8,25 @@ public class Hangman {
         String[] fruitWords = {"cranberry", "watermelon", "orange", "pineapple", "strawberry", "grapefruit"};
         String randomWord = getRandomWord(fruitWords);
         char[] charArray = randomWord.toCharArray();
-
-        System.out.println("\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-        System.out.print("Word: ");
-        hideWord(charArray);
-        System.out.print("\nMisses: ");
-        char guess = userGuess();
-        checkLetter(randomWord, charArray, guess);
+        int chances = 7;
+        char guess;
+        char[] hiddenWord = hideWord(charArray);
+        while (chances >= 0) {
+            System.out.println("\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+            System.out.print("Word: ");
+            System.out.println(new String(hiddenWord));
+            System.out.print("Misses: ");
+            guess = userGuess();
+            checkLetter(randomWord, hiddenWord, guess);
+            chances -= 1;
+        }
     }
 
-    public static void hideWord(char[] charArray) {
+    public static char[] hideWord(char[] charArray) {
         for (int i = 0; i < charArray.length; i++) {
-
             charArray[i] = '-';
-            System.out.print(charArray[i]);
         }
+        return charArray;
     }
 
     public static String getRandomWord(String[] array) {
@@ -36,20 +40,14 @@ public class Hangman {
     public static char userGuess() {
         System.out.print("\nGuess: ");
         Scanner scan = new Scanner(System.in);
-        char guess = scan.next().charAt(0);
-        return guess;
+        return scan.next().charAt(0);
     }
 
-    public static char[] checkLetter(String randomWord, char[] hiddenWord, char guess) {
+    public static void checkLetter(String randomWord, char[] hiddenWord, char guess) {
         for (int i = 0; i < randomWord.length(); i++) {
             if (randomWord.charAt(i) == guess) {
                 hiddenWord[i] = guess;
-                System.out.print(hiddenWord[i]);
-            } else {
-                hiddenWord[i] = '-';
-                System.out.print('-');
             }
         }
-        return hiddenWord;
     }
 }
