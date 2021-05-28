@@ -1,0 +1,6 @@
+Terrier
+3
+6,2
+Bulldog
+5
+4,5
