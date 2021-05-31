@@ -16,18 +16,11 @@ public class ArrayListThereOrNot {
         System.out.println("ArrayList: " + arrayList);
         System.out.print("Value to find: ");
         int userInput = scan.nextInt();
-        int count = 0;
-        for (int i = 0; i < arrayList.size(); i++) {
-            if (arrayList.contains(userInput)) {
-                count += 1;
-            }
-        }
-        if (count > 0) {
+        if (arrayList.contains(userInput)) {
             System.out.println(userInput + " is in the ArrayList.");
         }
         else {
             System.out.println(userInput + " is not in the ArrayList.");
-
         }
     }
 }
