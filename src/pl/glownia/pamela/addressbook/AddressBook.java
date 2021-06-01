@@ -1,5 +1,6 @@
 package pl.glownia.pamela.addressbook;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 class Address {
@@ -7,11 +8,28 @@ class Address {
     String lastName;
     String phoneNumber;
     String email;
+
+    public Address(String firstName, String lastName, String phoneNumber, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "first name: " + firstName +
+                ", last name: " + lastName +
+                ", phoneNumber: " + phoneNumber +
+                ", email: " + email;
+    }
 }
 
 public class AddressBook {
+    static ArrayList<Address> addressBookArrayList = new ArrayList<>();
+    static Scanner scan = new Scanner(System.in);
+
     public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in);
         displayMenu();
         int userInput;
         do {
@@ -28,30 +46,36 @@ public class AddressBook {
     public static void chooseOption(int userInput) {
         if (userInput == 1) {
             System.out.println("Loading...");
-        }
-        else if (userInput == 2) {
+        } else if (userInput == 2) {
             System.out.println("Saving...");
-        }
-        else if (userInput == 3) {
-            System.out.println("Adding...");
-        }
-        else if (userInput == 4) {
+        } else if (userInput == 3) {
+            addressBookArrayList = addEntry();
+        } else if (userInput == 4) {
             System.out.println("Removing...");
-        }
-        else if (userInput == 5) {
+        } else if (userInput == 5) {
             System.out.println("Editing...");
-        }
-        else if (userInput == 6) {
+        } else if (userInput == 6) {
             System.out.println("Sorting...");
-        }
-        else if (userInput == 7) {
+        } else if (userInput == 7) {
             System.out.println("Searching...");
-        }
-        else if (userInput == 8) {
+        } else if (userInput == 8) {
             System.out.println("Goodbye!");
-        }
-        else {
+        } else {
             System.out.println("Incorrect value. Enter a option from 1 to 8.");
         }
+    }
+
+    public static ArrayList<Address> addEntry() {
+        System.out.print("Enter your first name:");
+        String firstName = scan.next();
+        System.out.print("Enter your last name:");
+        String lastName = scan.next();
+        System.out.print("Enter your phone number:");
+        String phoneNumber = scan.next();
+        System.out.print("Enter your email:");
+        String email = scan.next();
+        addressBookArrayList.add(new Address(firstName, lastName, phoneNumber, email));
+        System.out.println("Your data are added." + addressBookArrayList);
+        return addressBookArrayList;
     }
 }
