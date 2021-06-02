@@ -30,6 +30,8 @@ class Address implements Serializable {
 public class AddressBook implements Serializable {
     static ArrayList<Address> addressBookArrayList = new ArrayList<>();
     static Scanner scan = new Scanner(System.in);
+    static String fileName = "addressbook.txt";
+
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         displayMenu();
@@ -50,12 +52,15 @@ public class AddressBook implements Serializable {
 
         if (userInput == 1) {
             loadFromFile();
+            displayArrayList();
         } else if (userInput == 2) {
             saveToFile();
         } else if (userInput == 3) {
             addressBookArrayList = addEntry();
+            displayArrayList();
         } else if (userInput == 4) {
             addressBookArrayList = removeEntry();
+            displayArrayList();
         } else if (userInput == 5) {
             System.out.println("Editing...");
         } else if (userInput == 6) {
@@ -70,17 +75,12 @@ public class AddressBook implements Serializable {
     }
 
     public static void loadFromFile() throws IOException, ClassNotFoundException {
-        ObjectInputStream load = new ObjectInputStream(new FileInputStream("/home/pam/Documents/Java_projects/BasicExercises/src/pl/glownia/pamela/addressbook/addressbook.txt"));
+        ObjectInputStream load = new ObjectInputStream(new FileInputStream(fileName));
         addressBookArrayList = (ArrayList<Address>) load.readObject();
-        for (int i = 0; i < addressBookArrayList.size(); i++) {
-            System.out.println(addressBookArrayList.get(i));
-        }
         load.close();
     }
 
     public static void saveToFile() throws IOException {
-        System.out.println("Data will be saved in addressbook.txt");
-        String fileName = "addressbook.txt";
         FileOutputStream save = new FileOutputStream(fileName);
         ObjectOutputStream write = new ObjectOutputStream(save);
         write.writeObject(addressBookArrayList);
@@ -98,27 +98,43 @@ public class AddressBook implements Serializable {
         System.out.print("Enter your email:");
         String email = scan.next();
         addressBookArrayList.add(new Address(firstName, lastName, phoneNumber, email));
-        System.out.println("Your data are added.\n" + addressBookArrayList);
+        System.out.println("Your data are added.\n");
         return addressBookArrayList;
     }
 
-    public static ArrayList<Address> removeEntry() {
+    public static ArrayList<Address> removeEntry() throws IOException, ClassNotFoundException {
         System.out.println("Choose item to remove:");
         for (int i = 0; i < addressBookArrayList.size(); i++) {
             System.out.println(i + ") " + addressBookArrayList.get(i));
         }
         int numberOfIndex = scan.nextInt();
-
-        for (int i = 0; i < addressBookArrayList.size(); i++) {
-            while (numberOfIndex < 0 || numberOfIndex > addressBookArrayList.size()) {
-                System.out.println("Incorrect input. Choose item to remove:");
-                numberOfIndex = scan.nextInt();
+        while (numberOfIndex < 0 || numberOfIndex > addressBookArrayList.size()) {
+            System.out.println("Incorrect input. Choose item to remove:");
+            numberOfIndex = scan.nextInt();
+        }
+        if (fileName.length() != 0) {
+            loadFromFile();
+            for (int i = 0; i < addressBookArrayList.size(); i++) {
+                if (i == numberOfIndex) {
+                    addressBookArrayList.remove(i);
+                }
             }
-            if (i == numberOfIndex) {
-                addressBookArrayList.remove(i);
+            saveToFile();
+        } else {
+            for (int i = 0; i < addressBookArrayList.size(); i++) {
+
+                if (i == numberOfIndex) {
+                    addressBookArrayList.remove(i);
+                }
             }
         }
         System.out.println("Item was removed.");
         return addressBookArrayList;
+    }
+
+    public static void displayArrayList() {
+        for (int i = 0; i < addressBookArrayList.size(); i++) {
+            System.out.println(addressBookArrayList.get(i));
+        }
     }
 }
