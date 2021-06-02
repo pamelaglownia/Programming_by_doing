@@ -40,10 +40,12 @@ public class AddressBook {
     }
 
     public static void displayMenu() {
-        System.out.println("1) Load from file \n2) Save to file \n3) Add an entry \n4) Remove an entry \n5) Edit an existing entry \n6) Sort the address book \n7) Search for a specific entry \n8) Quit");
+        System.out.println("1) Load from file \n2) Save to file \n3) Add an entry \n4) Remove an entry \n" +
+                "5) Edit an existing entry \n6) Sort the address book \n7) Search for a specific entry \n8) Quit");
     }
 
     public static void chooseOption(int userInput) {
+
         if (userInput == 1) {
             System.out.println("Loading...");
         } else if (userInput == 2) {
@@ -51,7 +53,7 @@ public class AddressBook {
         } else if (userInput == 3) {
             addressBookArrayList = addEntry();
         } else if (userInput == 4) {
-            System.out.println("Removing...");
+            addressBookArrayList = removeEntry();
         } else if (userInput == 5) {
             System.out.println("Editing...");
         } else if (userInput == 6) {
@@ -75,7 +77,27 @@ public class AddressBook {
         System.out.print("Enter your email:");
         String email = scan.next();
         addressBookArrayList.add(new Address(firstName, lastName, phoneNumber, email));
-        System.out.println("Your data are added." + addressBookArrayList);
+        System.out.println("Your data are added.\n" + addressBookArrayList);
+        return addressBookArrayList;
+    }
+
+    public static ArrayList<Address> removeEntry() {
+        System.out.println("Choose item to remove:");
+        for (int i = 0; i < addressBookArrayList.size(); i++) {
+            System.out.println(i + ") " + addressBookArrayList.get(i));
+        }
+        int numberOfIndex = scan.nextInt();
+
+        for (int i = 0; i < addressBookArrayList.size(); i++) {
+            while(numberOfIndex <0 || numberOfIndex>addressBookArrayList.size()) {
+                System.out.println("Incorrect input. Choose item to remove:");
+                numberOfIndex=scan.nextInt();
+            }
+            if (i == numberOfIndex) {
+                addressBookArrayList.remove(i);
+            }
+        }
+        System.out.println("Item was removed.");
         return addressBookArrayList;
     }
 }
