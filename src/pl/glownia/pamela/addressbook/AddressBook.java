@@ -1,9 +1,10 @@
 package pl.glownia.pamela.addressbook;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-class Address {
+class Address implements Serializable {
     String firstName;
     String lastName;
     String phoneNumber;
@@ -18,22 +19,23 @@ class Address {
 
     @Override
     public String toString() {
-        return "first name: " + firstName +
-                ", last name: " + lastName +
-                ", phoneNumber: " + phoneNumber +
-                ", email: " + email;
+        return firstName +
+                " " + lastName +
+                " " + phoneNumber +
+                " " + email;
+
     }
 }
 
-public class AddressBook {
+public class AddressBook implements Serializable {
     static ArrayList<Address> addressBookArrayList = new ArrayList<>();
     static Scanner scan = new Scanner(System.in);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         displayMenu();
         int userInput;
         do {
-            System.out.print("\nChoose what you would like to do with the databases:");
+            System.out.print("\nChoose what you would like to do with the databases: ");
             userInput = scan.nextInt();
             chooseOption(userInput);
         } while (userInput != 8);
@@ -44,12 +46,12 @@ public class AddressBook {
                 "5) Edit an existing entry \n6) Sort the address book \n7) Search for a specific entry \n8) Quit");
     }
 
-    public static void chooseOption(int userInput) {
+    public static void chooseOption(int userInput) throws IOException, ClassNotFoundException {
 
         if (userInput == 1) {
-            System.out.println("Loading...");
+            loadFromFile();
         } else if (userInput == 2) {
-            System.out.println("Saving...");
+            saveToFile();
         } else if (userInput == 3) {
             addressBookArrayList = addEntry();
         } else if (userInput == 4) {
@@ -65,6 +67,25 @@ public class AddressBook {
         } else {
             System.out.println("Incorrect value. Enter a option from 1 to 8.");
         }
+    }
+
+    public static void loadFromFile() throws IOException, ClassNotFoundException {
+        ObjectInputStream load = new ObjectInputStream(new FileInputStream("/home/pam/Documents/Java_projects/BasicExercises/src/pl/glownia/pamela/addressbook/addressbook.txt"));
+        addressBookArrayList = (ArrayList<Address>) load.readObject();
+        for (int i = 0; i < addressBookArrayList.size(); i++) {
+            System.out.println(addressBookArrayList.get(i));
+        }
+        load.close();
+    }
+
+    public static void saveToFile() throws IOException {
+        System.out.println("Data will be saved in addressbook.txt");
+        String fileName = "addressbook.txt";
+        FileOutputStream save = new FileOutputStream(fileName);
+        ObjectOutputStream write = new ObjectOutputStream(save);
+        write.writeObject(addressBookArrayList);
+        write.close();
+        System.out.println("Data are stored in " + fileName);
     }
 
     public static ArrayList<Address> addEntry() {
@@ -89,9 +110,9 @@ public class AddressBook {
         int numberOfIndex = scan.nextInt();
 
         for (int i = 0; i < addressBookArrayList.size(); i++) {
-            while(numberOfIndex <0 || numberOfIndex>addressBookArrayList.size()) {
+            while (numberOfIndex < 0 || numberOfIndex > addressBookArrayList.size()) {
                 System.out.println("Incorrect input. Choose item to remove:");
-                numberOfIndex=scan.nextInt();
+                numberOfIndex = scan.nextInt();
             }
             if (i == numberOfIndex) {
                 addressBookArrayList.remove(i);
