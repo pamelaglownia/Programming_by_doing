@@ -37,12 +37,28 @@ class Address implements Serializable {
     public String getEmail() {
         return email;
     }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
 
 public class AddressBook implements Serializable {
     static ArrayList<Address> addressBookArrayList = new ArrayList<>();
     static Scanner scan = new Scanner(System.in);
-    static String fileName = "addressbook.txt";
+    static String fileName = "/home/pam/Documents/Java_projects/BasicExercises/src/pl/glownia/pamela/addressbook/addressbook.txt";
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         displayMenu();
@@ -73,7 +89,7 @@ public class AddressBook implements Serializable {
             addressBookArrayList = removeEntry();
             displayArrayList();
         } else if (userInput == 5) {
-            System.out.println("Editing...");
+            addressBookArrayList = editItem();
         } else if (userInput == 6) {
             System.out.println("Sorting...");
         } else if (userInput == 7) {
@@ -206,9 +222,58 @@ public class AddressBook implements Serializable {
         }
     }
 
+    public static ArrayList<Address> editItem() throws IOException {
+        displayArrayList();
+        String newInput;
+        System.out.print("Choose which data you would like to change (from 0 to " + (addressBookArrayList.size() - 1) + "): ");
+        int indexToChange = scan.nextInt();
+        while (indexToChange < 0 || indexToChange >= addressBookArrayList.size()) {
+            System.out.print("Incorrect value. Choose number from 0 to " + (addressBookArrayList.size() - 1) + "): ");
+            indexToChange = scan.nextInt();
+        }
+        System.out.println("1) First name, \n2) Last name, \n3) Phone number, \n4) Email");
+        System.out.print("Choose one of fields above to edit: ");
+        int fieldChoice = scan.nextInt();
+        while (!(fieldChoice == 1 || fieldChoice == 2 || fieldChoice == 3 || fieldChoice == 4)) {
+            System.out.println("Incorrect value. Choose number from 1 to 4: ");
+            fieldChoice = scan.nextInt();
+        }
+        if (fieldChoice == 1) {
+            System.out.print("Type new first name: ");
+            newInput = scan.next();
+            addressBookArrayList.get(indexToChange).setFirstName(newInput);
+            System.out.println("Data was changed.");
+        } else if (fieldChoice == 2) {
+            System.out.print("Type new last name : ");
+            newInput = scan.next();
+            addressBookArrayList.get(indexToChange).setLastName(newInput);
+            System.out.println("Data was changed.");
+        } else if (fieldChoice == 3) {
+            System.out.print("Type new phone number : ");
+            newInput = scan.next();
+            while (!(newInput.matches("[0-9]+"))) {
+                System.out.print("Phone number can contain only numbers. Enter your phone number: ");
+                newInput = scan.next();
+            }
+            addressBookArrayList.get(indexToChange).setPhoneNumber(newInput);
+            System.out.println("Data was changed.");
+        } else {
+            System.out.print("Type new email: ");
+            newInput = scan.next();
+            while (!(newInput.matches("^(.+)@(.+)$"))) {
+                System.out.print("Incorrect email address. Enter your email: ");
+                newInput = scan.next();
+            }
+            addressBookArrayList.get(indexToChange).setEmail(newInput);
+            System.out.println("Data was changed.");
+        }
+        saveToFile();
+        return addressBookArrayList;
+    }
+
     public static void displayArrayList() {
-        for (Address address : addressBookArrayList) {
-            System.out.println(address);
+        for (int i = 0; i < addressBookArrayList.size(); i++) {
+            System.out.println(i + ") " + addressBookArrayList.get(i));
         }
     }
 }
