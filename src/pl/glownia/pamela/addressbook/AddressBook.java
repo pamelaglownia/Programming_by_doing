@@ -2,6 +2,8 @@ package pl.glownia.pamela.addressbook;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Scanner;
 
 class Address implements Serializable {
@@ -15,11 +17,6 @@ class Address implements Serializable {
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.email = email;
-    }
-
-    @Override
-    public String toString() {
-        return firstName + " " + lastName + " " + phoneNumber + " " + email;
     }
 
     public String getFirstName() {
@@ -53,12 +50,42 @@ class Address implements Serializable {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    @Override
+    public String toString() {
+        return firstName + " " + lastName + " " + phoneNumber + " " + email;
+    }
+
+    public static Comparator<Address> COMPARE_BY_FIRSTNAME = new Comparator<Address>() {
+        @Override
+        public int compare(Address one, Address next) {
+            return one.firstName.compareToIgnoreCase(next.firstName);
+        }
+    };
+    public static Comparator<Address> COMPARE_BY_LASTNAME = new Comparator<Address>() {
+        @Override
+        public int compare(Address one, Address next) {
+            return one.lastName.compareToIgnoreCase(next.lastName);
+        }
+    };
+    public static Comparator<Address> COMPARE_BY_PHONENUMBER = new Comparator<Address>() {
+        @Override
+        public int compare(Address one, Address next) {
+            return one.phoneNumber.compareToIgnoreCase(next.phoneNumber);
+        }
+    };
+    public static Comparator<Address> COMPARE_BY_EMAIL = new Comparator<Address>() {
+        @Override
+        public int compare(Address one, Address next) {
+            return one.email.compareToIgnoreCase(next.email);
+        }
+    };
 }
 
 public class AddressBook implements Serializable {
     static ArrayList<Address> addressBookArrayList = new ArrayList<>();
     static Scanner scan = new Scanner(System.in);
-    static String fileName = "/home/pam/Documents/Java_projects/BasicExercises/src/pl/glownia/pamela/addressbook/addressbook.txt";
+    static String fileName = "addressbook.txt";
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         displayMenu();
@@ -84,14 +111,12 @@ public class AddressBook implements Serializable {
             saveToFile();
         } else if (userInput == 3) {
             addressBookArrayList = addEntry();
-            displayArrayList();
         } else if (userInput == 4) {
             addressBookArrayList = removeEntry();
-            displayArrayList();
         } else if (userInput == 5) {
             addressBookArrayList = editItem();
         } else if (userInput == 6) {
-            System.out.println("Sorting...");
+            addressBookArrayList = sortAddressBook();
         } else if (userInput == 7) {
             searchInAddressBook();
         } else if (userInput == 8) {
@@ -134,6 +159,7 @@ public class AddressBook implements Serializable {
         }
         addressBookArrayList.add(new Address(firstName, lastName, phoneNumber, email));
         System.out.println("Your data are added.\n");
+        displayArrayList();
         return addressBookArrayList;
     }
 
@@ -163,6 +189,75 @@ public class AddressBook implements Serializable {
             }
         }
         System.out.println("Item was removed.");
+        displayArrayList();
+        return addressBookArrayList;
+    }
+
+    public static ArrayList<Address> editItem() throws IOException {
+        displayArrayList();
+        String newInput;
+        System.out.print("Choose which data you would like to change (from 0 to " + (addressBookArrayList.size() - 1) + "): ");
+        int indexToChange = scan.nextInt();
+        while (indexToChange < 0 || indexToChange >= addressBookArrayList.size()) {
+            System.out.print("Incorrect value. Choose number from 0 to " + (addressBookArrayList.size() - 1) + "): ");
+            indexToChange = scan.nextInt();
+        }
+        System.out.println("1) First name, \n2) Last name, \n3) Phone number, \n4) Email");
+        System.out.print("Choose one of fields above to edit: ");
+        int fieldChoice = scan.nextInt();
+        while (!(fieldChoice == 1 || fieldChoice == 2 || fieldChoice == 3 || fieldChoice == 4)) {
+            System.out.println("Incorrect value. Choose number from 1 to 4: ");
+            fieldChoice = scan.nextInt();
+        }
+        if (fieldChoice == 1) {
+            System.out.print("Type new first name: ");
+            newInput = scan.next();
+            addressBookArrayList.get(indexToChange).setFirstName(newInput);
+            System.out.println("Data was changed.");
+        } else if (fieldChoice == 2) {
+            System.out.print("Type new last name : ");
+            newInput = scan.next();
+            addressBookArrayList.get(indexToChange).setLastName(newInput);
+            System.out.println("Data was changed.");
+        } else if (fieldChoice == 3) {
+            System.out.print("Type new phone number : ");
+            newInput = scan.next();
+            while (!(newInput.matches("[0-9]+"))) {
+                System.out.print("Phone number can contain only numbers. Enter your phone number: ");
+                newInput = scan.next();
+            }
+            addressBookArrayList.get(indexToChange).setPhoneNumber(newInput);
+            System.out.println("Data was changed.");
+        } else {
+            System.out.print("Type new email: ");
+            newInput = scan.next();
+            while (!(newInput.matches("^(.+)@(.+)$"))) {
+                System.out.print("Incorrect email address. Enter your email: ");
+                newInput = scan.next();
+            }
+            addressBookArrayList.get(indexToChange).setEmail(newInput);
+            System.out.println("Data was changed.");
+        }
+        saveToFile();
+        return addressBookArrayList;
+    }
+
+    public static ArrayList<Address> sortAddressBook() {
+        System.out.println("1) First name, \n2) Last name, \n3) Phone number, \n4) Email");
+        System.out.print("Choose one of fields above to sort by it: ");
+        int userChoice = scan.nextInt();
+        if (userChoice == 1) {
+            Collections.sort(addressBookArrayList, Address.COMPARE_BY_FIRSTNAME);
+        } else if (userChoice == 2) {
+            Collections.sort(addressBookArrayList, Address.COMPARE_BY_LASTNAME);
+
+        } else if (userChoice == 3) {
+            Collections.sort(addressBookArrayList, Address.COMPARE_BY_PHONENUMBER);
+
+        } else {
+            Collections.sort(addressBookArrayList, Address.COMPARE_BY_EMAIL);
+        }
+        displayArrayList();
         return addressBookArrayList;
     }
 
@@ -222,54 +317,6 @@ public class AddressBook implements Serializable {
         }
     }
 
-    public static ArrayList<Address> editItem() throws IOException {
-        displayArrayList();
-        String newInput;
-        System.out.print("Choose which data you would like to change (from 0 to " + (addressBookArrayList.size() - 1) + "): ");
-        int indexToChange = scan.nextInt();
-        while (indexToChange < 0 || indexToChange >= addressBookArrayList.size()) {
-            System.out.print("Incorrect value. Choose number from 0 to " + (addressBookArrayList.size() - 1) + "): ");
-            indexToChange = scan.nextInt();
-        }
-        System.out.println("1) First name, \n2) Last name, \n3) Phone number, \n4) Email");
-        System.out.print("Choose one of fields above to edit: ");
-        int fieldChoice = scan.nextInt();
-        while (!(fieldChoice == 1 || fieldChoice == 2 || fieldChoice == 3 || fieldChoice == 4)) {
-            System.out.println("Incorrect value. Choose number from 1 to 4: ");
-            fieldChoice = scan.nextInt();
-        }
-        if (fieldChoice == 1) {
-            System.out.print("Type new first name: ");
-            newInput = scan.next();
-            addressBookArrayList.get(indexToChange).setFirstName(newInput);
-            System.out.println("Data was changed.");
-        } else if (fieldChoice == 2) {
-            System.out.print("Type new last name : ");
-            newInput = scan.next();
-            addressBookArrayList.get(indexToChange).setLastName(newInput);
-            System.out.println("Data was changed.");
-        } else if (fieldChoice == 3) {
-            System.out.print("Type new phone number : ");
-            newInput = scan.next();
-            while (!(newInput.matches("[0-9]+"))) {
-                System.out.print("Phone number can contain only numbers. Enter your phone number: ");
-                newInput = scan.next();
-            }
-            addressBookArrayList.get(indexToChange).setPhoneNumber(newInput);
-            System.out.println("Data was changed.");
-        } else {
-            System.out.print("Type new email: ");
-            newInput = scan.next();
-            while (!(newInput.matches("^(.+)@(.+)$"))) {
-                System.out.print("Incorrect email address. Enter your email: ");
-                newInput = scan.next();
-            }
-            addressBookArrayList.get(indexToChange).setEmail(newInput);
-            System.out.println("Data was changed.");
-        }
-        saveToFile();
-        return addressBookArrayList;
-    }
 
     public static void displayArrayList() {
         for (int i = 0; i < addressBookArrayList.size(); i++) {
