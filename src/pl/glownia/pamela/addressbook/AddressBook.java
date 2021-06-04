@@ -9,12 +9,14 @@ import java.util.Scanner;
 class Address implements Serializable {
     String firstName;
     String lastName;
+    String address;
     String phoneNumber;
     String email;
 
-    public Address(String firstName, String lastName, String phoneNumber, String email) {
+    public Address(String firstName, String lastName, String address, String phoneNumber, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.address = address;
         this.phoneNumber = phoneNumber;
         this.email = email;
     }
@@ -25,6 +27,10 @@ class Address implements Serializable {
 
     public String getLastName() {
         return lastName;
+    }
+
+    public String getAddress() {
+        return address;
     }
 
     public String getPhoneNumber() {
@@ -43,17 +49,16 @@ class Address implements Serializable {
         this.lastName = lastName;
     }
 
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    @Override
-    public String toString() {
-        return firstName + " " + lastName + " " + phoneNumber + " " + email;
     }
 
     public static Comparator<Address> COMPARE_BY_FIRSTNAME = new Comparator<Address>() {
@@ -68,6 +73,13 @@ class Address implements Serializable {
             return one.lastName.compareToIgnoreCase(next.lastName);
         }
     };
+
+    public static Comparator<Address> COMPARE_BY_ADDRESS = new Comparator<Address>() {
+        @Override
+        public int compare(Address one, Address next) {
+            return one.address.compareToIgnoreCase(next.address);
+        }
+    };
     public static Comparator<Address> COMPARE_BY_PHONENUMBER = new Comparator<Address>() {
         @Override
         public int compare(Address one, Address next) {
@@ -80,6 +92,11 @@ class Address implements Serializable {
             return one.email.compareToIgnoreCase(next.email);
         }
     };
+
+    @Override
+    public String toString() {
+        return firstName + "\t" + lastName + "\t" + address + "\t" + phoneNumber + "\t" + email;
+    }
 }
 
 public class AddressBook implements Serializable {
@@ -145,6 +162,9 @@ public class AddressBook implements Serializable {
         String firstName = scan.next();
         System.out.print("Enter your last name: ");
         String lastName = scan.next();
+        scan.nextLine();
+        System.out.print("Enter your address [city, street, zip code]: ");
+        String address = scan.nextLine();
         System.out.print("Enter your phone number: ");
         String phoneNumber = scan.next();
         while (!(phoneNumber.matches("[0-9]+"))) {
@@ -157,7 +177,7 @@ public class AddressBook implements Serializable {
             System.out.print("Incorrect email address. Enter your email: ");
             email = scan.next();
         }
-        addressBookArrayList.add(new Address(firstName, lastName, phoneNumber, email));
+        addressBookArrayList.add(new Address(firstName, lastName, address, phoneNumber, email));
         System.out.println("Your data are added.\n");
         displayArrayList();
         return addressBookArrayList;
@@ -202,11 +222,11 @@ public class AddressBook implements Serializable {
             System.out.print("Incorrect value. Choose number from 0 to " + (addressBookArrayList.size() - 1) + "): ");
             indexToChange = scan.nextInt();
         }
-        System.out.println("1) First name, \n2) Last name, \n3) Phone number, \n4) Email");
+        System.out.println("1) First name, \n2) Last name, \n3) Address \n4) Phone number, \n5) Email");
         System.out.print("Choose one of fields above to edit: ");
         int fieldChoice = scan.nextInt();
-        while (!(fieldChoice == 1 || fieldChoice == 2 || fieldChoice == 3 || fieldChoice == 4)) {
-            System.out.println("Incorrect value. Choose number from 1 to 4: ");
+        while (!(fieldChoice == 1 || fieldChoice == 2 || fieldChoice == 3 || fieldChoice == 4 || fieldChoice == 5)) {
+            System.out.println("Incorrect value. Choose number from 1 to 5: ");
             fieldChoice = scan.nextInt();
         }
         if (fieldChoice == 1) {
@@ -215,12 +235,17 @@ public class AddressBook implements Serializable {
             addressBookArrayList.get(indexToChange).setFirstName(newInput);
             System.out.println("Data was changed.");
         } else if (fieldChoice == 2) {
-            System.out.print("Type new last name : ");
+            System.out.print("Type new last name: ");
             newInput = scan.next();
             addressBookArrayList.get(indexToChange).setLastName(newInput);
             System.out.println("Data was changed.");
         } else if (fieldChoice == 3) {
-            System.out.print("Type new phone number : ");
+            System.out.print("Type new address: ");
+            newInput = scan.nextLine();
+            addressBookArrayList.get(indexToChange).setAddress(newInput);
+            System.out.println("Data was changed.");
+        } else if (fieldChoice == 4) {
+            System.out.print("Type new phone number: ");
             newInput = scan.next();
             while (!(newInput.matches("[0-9]+"))) {
                 System.out.print("Phone number can contain only numbers. Enter your phone number: ");
@@ -243,15 +268,22 @@ public class AddressBook implements Serializable {
     }
 
     public static ArrayList<Address> sortAddressBook() {
-        System.out.println("1) First name, \n2) Last name, \n3) Phone number, \n4) Email");
+        System.out.println("1) First name, \n2) Last name, \n3) Address \n4) Phone number, \n5) Email");
         System.out.print("Choose one of fields above to sort by it: ");
         int userChoice = scan.nextInt();
+        while (!(userChoice == 1 || userChoice == 2 || userChoice == 3 || userChoice == 4 || userChoice == 5)) {
+            System.out.println("Incorrect value. Choose number from 1 to 5: ");
+            userChoice = scan.nextInt();
+        }
         if (userChoice == 1) {
             Collections.sort(addressBookArrayList, Address.COMPARE_BY_FIRSTNAME);
         } else if (userChoice == 2) {
             Collections.sort(addressBookArrayList, Address.COMPARE_BY_LASTNAME);
 
         } else if (userChoice == 3) {
+            Collections.sort(addressBookArrayList, Address.COMPARE_BY_ADDRESS);
+
+        } else if (userChoice == 4) {
             Collections.sort(addressBookArrayList, Address.COMPARE_BY_PHONENUMBER);
 
         } else {
@@ -264,50 +296,60 @@ public class AddressBook implements Serializable {
     public static void searchInAddressBook() {
         int searchingResult = 0;
         String searchingWord;
-        System.out.println("1) First name, \n2) Last name, \n3) Phone number, \n4) Email");
+        System.out.println("1) First name, \n2) Last name, \n3) Address \n4) Phone number, \n5) Email");
         System.out.print("Choose one of searching fields above: ");
         int userChoice = scan.nextInt();
-        while (!(userChoice == 1 || userChoice == 2 || userChoice == 3 || userChoice == 4)) {
-            System.out.println("Incorrect value. Choose number from 1 to 4: ");
+        while (!(userChoice == 1 || userChoice == 2 || userChoice == 3 || userChoice == 4 || userChoice == 5)) {
+            System.out.println("Incorrect value. Choose number from 1 to 5: ");
             userChoice = scan.nextInt();
         }
         if (userChoice == 1) {
             System.out.print("Type first name to search: ");
             searchingWord = scan.next();
-            for (Address address : addressBookArrayList) {
-                if (address.getFirstName().equalsIgnoreCase(searchingWord)) {
+            for (Address addressData : addressBookArrayList) {
+                if (addressData.getFirstName().equalsIgnoreCase(searchingWord)) {
                     System.out.println("Data exists.");
-                    System.out.println(address);
+                    System.out.println(addressData);
                     searchingResult += 1;
                 }
             }
         } else if (userChoice == 2) {
             System.out.print("Type last name to search: ");
             searchingWord = scan.next();
-            for (Address address : addressBookArrayList) {
-                if (address.getLastName().equalsIgnoreCase(searchingWord)) {
+            for (Address addressData : addressBookArrayList) {
+                if (addressData.getLastName().equalsIgnoreCase(searchingWord)) {
                     System.out.println("Data exists.");
-                    System.out.println(address);
+                    System.out.println(addressData);
                     searchingResult += 1;
                 }
             }
         } else if (userChoice == 3) {
+            System.out.print("Type address to search [city, street, zip code]: ");
+            searchingWord = scan.nextLine();
+            for (Address addressData : addressBookArrayList) {
+                if (addressData.getAddress().equalsIgnoreCase(searchingWord)) {
+                    System.out.println("Data exists.");
+                    System.out.println(addressData);
+                    searchingResult += 1;
+                }
+            }
+        } else if (userChoice == 4) {
             System.out.print("Type phone number to search: ");
             searchingWord = scan.next();
-            for (Address address : addressBookArrayList) {
-                if (address.getPhoneNumber().equalsIgnoreCase(searchingWord)) {
+            for (Address addressData : addressBookArrayList) {
+                if (addressData.getPhoneNumber().equalsIgnoreCase(searchingWord)) {
                     System.out.println("Data exists.");
-                    System.out.println(address);
+                    System.out.println(addressData);
                     searchingResult += 1;
                 }
             }
         } else {
             System.out.print("Type email to search: ");
             searchingWord = scan.next();
-            for (Address address : addressBookArrayList) {
-                if (address.getEmail().equalsIgnoreCase(searchingWord)) {
+            for (Address addressData : addressBookArrayList) {
+                if (addressData.getEmail().equalsIgnoreCase(searchingWord)) {
                     System.out.println("Data exists.");
-                    System.out.println(address);
+                    System.out.println(addressData);
                     searchingResult += 1;
                 }
             }
