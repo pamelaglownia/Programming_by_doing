@@ -2,7 +2,6 @@ package pl.glownia.pamela.addressbook;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Scanner;
 
@@ -95,7 +94,7 @@ class Address implements Serializable {
 
     @Override
     public String toString() {
-        return firstName + "\t" + lastName + "\t" + address + "\t" + phoneNumber + "\t" + email;
+        return ">Name: " + firstName + " >Last name: " + lastName + " >Address: " + address + " >Phone number: " + phoneNumber + " >Email: " + email;
     }
 }
 
@@ -103,18 +102,20 @@ public class AddressBook implements Serializable {
     static ArrayList<Address> addressBookArrayList = new ArrayList<>();
     static Scanner scan = new Scanner(System.in);
     static String fileName = "addressbook.txt";
+    static int availableSpaceInAddressBook = 10;
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        displayMenu();
         int userInput;
         do {
+            displayMenu();
             System.out.print("\nChoose what you would like to do with the databases: ");
             userInput = scan.nextInt();
             chooseOption(userInput);
-        } while (userInput != 8);
+        } while (userInput != 8 && availableSpaceInAddressBook>=0);
     }
 
     public static void displayMenu() {
+        System.out.println("\n***** MAIN MENU *****");
         System.out.println("1) Load from file \n2) Save to file \n3) Add an entry \n4) Remove an entry \n" +
                 "5) Edit an existing entry \n6) Sort the address book \n7) Search for a specific entry \n8) Quit");
     }
@@ -144,12 +145,18 @@ public class AddressBook implements Serializable {
     }
 
     public static void loadFromFile() throws IOException, ClassNotFoundException {
+        System.out.println("\n***** LOAD DATA *****");
+        if(fileName.length() ==0 || addressBookArrayList.size()==0){
+            System.out.println("Address book is empty or you didn't save data to file.");
+        }
+        else{
         ObjectInputStream load = new ObjectInputStream(new FileInputStream(fileName));
         addressBookArrayList = (ArrayList<Address>) load.readObject();
-        load.close();
+        load.close();}
     }
 
     public static void saveToFile() throws IOException {
+        System.out.println("\n***** SAVE DATA *****");
         FileOutputStream save = new FileOutputStream(fileName);
         ObjectOutputStream write = new ObjectOutputStream(save);
         write.writeObject(addressBookArrayList);
@@ -158,62 +165,75 @@ public class AddressBook implements Serializable {
     }
 
     public static ArrayList<Address> addEntry() {
-        System.out.print("Enter your first name: ");
-        String firstName = scan.next();
-        System.out.print("Enter your last name: ");
-        String lastName = scan.next();
-        scan.nextLine();
-        System.out.print("Enter your address [city, street, zip code]: ");
-        String address = scan.nextLine();
-        System.out.print("Enter your phone number: ");
-        String phoneNumber = scan.next();
-        while (!(phoneNumber.matches("[0-9]+"))) {
-            System.out.print("Phone number can contain only numbers. Enter your phone number: ");
-            phoneNumber = scan.next();
+        System.out.println("\n***** ADD NEW DATA *****");
+        if(availableSpaceInAddressBook ==0){
+            System.out.println("You can't add new data. Address book is full.");
         }
-        System.out.print("Enter your email: ");
-        String email = scan.next();
-        while (!(email.matches("^(.+)@(.+)$"))) {
-            System.out.print("Incorrect email address. Enter your email: ");
-            email = scan.next();
+        else {
+            System.out.print("Enter your first name: ");
+            String firstName = scan.next();
+            System.out.print("Enter your last name: ");
+            String lastName = scan.next();
+            scan.nextLine();
+            System.out.print("Enter your address [city, street, zip code]: ");
+            String address = scan.nextLine();
+            System.out.print("Enter your phone number: ");
+            String phoneNumber = scan.next();
+            while (!(phoneNumber.matches("[0-9]+"))) {
+                System.out.print("Phone number can contain only numbers. Enter your phone number: ");
+                phoneNumber = scan.next();
+            }
+            System.out.print("Enter your email: ");
+            String email = scan.next();
+            while (!(email.matches("^(.+)@(.+)$"))) {
+                System.out.print("Incorrect email address. Enter your email: ");
+                email = scan.next();
+            }
+            addressBookArrayList.add(new Address(firstName, lastName, address, phoneNumber, email));
+            System.out.println("Your data are added.\n");
+            displayArrayList();
+            availableSpaceInAddressBook -= 1;
         }
-        addressBookArrayList.add(new Address(firstName, lastName, address, phoneNumber, email));
-        System.out.println("Your data are added.\n");
-        displayArrayList();
         return addressBookArrayList;
     }
 
     public static ArrayList<Address> removeEntry() throws IOException, ClassNotFoundException {
-        System.out.print("Choose item to remove: ");
-        for (int i = 0; i < addressBookArrayList.size(); i++) {
-            System.out.println(i + ") " + addressBookArrayList.get(i));
+        System.out.println("\n***** REMOVE EXISTING DATA *****");
+        if(addressBookArrayList.size() ==0){
+            System.out.println("Address book is empty.");
         }
-        int numberOfIndex = scan.nextInt();
-        while (numberOfIndex < 0 || numberOfIndex > addressBookArrayList.size()) {
-            System.out.print("Incorrect input. Choose item to remove: ");
-            numberOfIndex = scan.nextInt();
-        }
-        if (fileName.length() != 0) {
-            loadFromFile();
-            for (int i = 0; i < addressBookArrayList.size(); i++) {
-                if (i == numberOfIndex) {
-                    addressBookArrayList.remove(i);
+        else {
+            displayArrayList();
+            System.out.println("Choose item to remove: ");
+            int numberOfIndex = scan.nextInt();
+            while (numberOfIndex < 0 || numberOfIndex > addressBookArrayList.size()) {
+                System.out.print("Incorrect input. Choose item to remove: ");
+                numberOfIndex = scan.nextInt();
+            }
+            if (fileName.length() != 0) {
+                loadFromFile();
+                for (int i = 0; i < addressBookArrayList.size(); i++) {
+                    if (i == numberOfIndex) {
+                        addressBookArrayList.remove(i);
+                    }
+                }
+                saveToFile();
+            } else {
+                for (int i = 0; i < addressBookArrayList.size(); i++) {
+                    if (i == numberOfIndex) {
+                        addressBookArrayList.remove(i);
+                    }
                 }
             }
-            saveToFile();
-        } else {
-            for (int i = 0; i < addressBookArrayList.size(); i++) {
-                if (i == numberOfIndex) {
-                    addressBookArrayList.remove(i);
-                }
-            }
+            System.out.println("Item was removed.");
+            displayArrayList();
+            availableSpaceInAddressBook += 1;
         }
-        System.out.println("Item was removed.");
-        displayArrayList();
         return addressBookArrayList;
     }
 
     public static ArrayList<Address> editItem() throws IOException {
+        System.out.println("\n***** EDIT EXISTING DATA *****");
         displayArrayList();
         String newInput;
         System.out.print("Choose which data you would like to change (from 0 to " + (addressBookArrayList.size() - 1) + "): ");
@@ -268,6 +288,7 @@ public class AddressBook implements Serializable {
     }
 
     public static ArrayList<Address> sortAddressBook() {
+        System.out.println("\n***** SORT DATA *****");
         System.out.println("1) First name, \n2) Last name, \n3) Address \n4) Phone number, \n5) Email");
         System.out.print("Choose one of fields above to sort by it: ");
         int userChoice = scan.nextInt();
@@ -276,24 +297,25 @@ public class AddressBook implements Serializable {
             userChoice = scan.nextInt();
         }
         if (userChoice == 1) {
-            Collections.sort(addressBookArrayList, Address.COMPARE_BY_FIRSTNAME);
+            addressBookArrayList.sort(Address.COMPARE_BY_FIRSTNAME);
         } else if (userChoice == 2) {
-            Collections.sort(addressBookArrayList, Address.COMPARE_BY_LASTNAME);
+            addressBookArrayList.sort(Address.COMPARE_BY_LASTNAME);
 
         } else if (userChoice == 3) {
-            Collections.sort(addressBookArrayList, Address.COMPARE_BY_ADDRESS);
+            addressBookArrayList.sort(Address.COMPARE_BY_ADDRESS);
 
         } else if (userChoice == 4) {
-            Collections.sort(addressBookArrayList, Address.COMPARE_BY_PHONENUMBER);
+            addressBookArrayList.sort(Address.COMPARE_BY_PHONENUMBER);
 
         } else {
-            Collections.sort(addressBookArrayList, Address.COMPARE_BY_EMAIL);
+            addressBookArrayList.sort(Address.COMPARE_BY_EMAIL);
         }
         displayArrayList();
         return addressBookArrayList;
     }
 
     public static void searchInAddressBook() {
+        System.out.println("\n***** SEARCH IN ADDRESS BOOK *****");
         int searchingResult = 0;
         String searchingWord;
         System.out.println("1) First name, \n2) Last name, \n3) Address \n4) Phone number, \n5) Email");
