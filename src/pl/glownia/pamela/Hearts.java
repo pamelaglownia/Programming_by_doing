@@ -13,7 +13,7 @@ class Card {
 
     @Override
     public String toString() {
-        return "suit: " + suit + ", rank: " + rank;
+        return "\nsuit: " + suit + ", rank: " + rank;
     }
 }
 
@@ -21,11 +21,10 @@ public class Hearts {
     static ArrayList<Card> deck;
 
     public static void main(String[] args) {
+
         deck = shuffleCards();
         ArrayList<Card> userDeckPlayerOne = dealCardsForPlayers();
-        ArrayList<Card> userDeckPlayerTwo = dealCardsForPlayers();
-        ArrayList<Card> userDeckPlayerThree = dealCardsForPlayers();
-        ArrayList<Card> userDeckPlayerFour = dealCardsForPlayers();
+       ArrayList<Card> additionalDeck = passThreeCardsToNextPlayer(userDeckPlayerOne);
     }
 
     public static ArrayList<Card> createDeck() {
@@ -52,7 +51,28 @@ public class Hearts {
         for (int cardsForUser = 0; cardsForUser < 13; cardsForUser++) {
             userDeck.add(deck.remove(random.nextInt(deck.size())));
         }
-        System.out.println("Your cards: " + userDeck);
         return userDeck;
+    }
+
+    public static ArrayList<Card> passThreeCardsToNextPlayer(ArrayList<Card> userDeck){
+        Scanner scan = new Scanner(System.in);
+        int chosenCards= 0;
+        ArrayList<Card>additionalUserDeck = new ArrayList<>();
+        System.out.println("Your cards:" + userDeck);
+        System.out.println("Choose three cards to pass to next player.");
+        do {
+            System.out.println(chosenCards +1 + ":");
+            System.out.print("\tSuit: ");
+            String suit = scan.next();
+            System.out.print("\tRank: ");
+            String rank = scan.next();
+            for(int i = 0; i < userDeck.size(); i++){
+            if(userDeck.get(i).suit.equalsIgnoreCase(suit) && userDeck.get(i).rank.equalsIgnoreCase(rank)){
+                additionalUserDeck.add(userDeck.remove(i));
+                chosenCards++;}
+            }
+        }while(chosenCards <3);
+        System.out.println(additionalUserDeck);
+        return additionalUserDeck;
     }
 }
