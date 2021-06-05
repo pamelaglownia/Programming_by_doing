@@ -13,7 +13,7 @@ class Card {
 
     @Override
     public String toString() {
-        return "suit: " + suit + ", rank: " + rank + "\n";
+        return "suit: " + suit + ", rank: " + rank;
     }
 }
 
@@ -22,6 +22,10 @@ public class Hearts {
 
     public static void main(String[] args) {
         deck = shuffleCards();
+        ArrayList<Card> userDeckPlayerOne = dealCardsForPlayers();
+        ArrayList<Card> userDeckPlayerTwo = dealCardsForPlayers();
+        ArrayList<Card> userDeckPlayerThree = dealCardsForPlayers();
+        ArrayList<Card> userDeckPlayerFour = dealCardsForPlayers();
     }
 
     public static ArrayList<Card> createDeck() {
@@ -39,7 +43,16 @@ public class Hearts {
     public static ArrayList<Card> shuffleCards() {
         deck = createDeck();
         Collections.shuffle(deck);
-        System.out.println(deck);
         return deck;
+    }
+
+    public static ArrayList<Card> dealCardsForPlayers() {
+        Random random = new Random();
+        ArrayList<Card> userDeck = new ArrayList<>();
+        for (int cardsForUser = 0; cardsForUser < 13; cardsForUser++) {
+            userDeck.add(deck.remove(random.nextInt(deck.size())));
+        }
+        System.out.println("Your cards: " + userDeck);
+        return userDeck;
     }
 }
