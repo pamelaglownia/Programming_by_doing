@@ -19,9 +19,10 @@ class Card {
 
 public class Hearts {
     static ArrayList<Card> deck;
+    static ArrayList<Card> stack;
 
     public static void main(String[] args) {
-
+        stack = new ArrayList<>();
         deck = shuffleCards();
         System.out.println("Player 1, your cards:");
         ArrayList<Card> userDeckPlayerOne = dealCardsForPlayers();
@@ -41,15 +42,25 @@ public class Hearts {
         ArrayList<Card> additionalDeckFour = passThreeCardsToNextPlayer(userDeckPlayerFour);
         deletePassedCards(userDeckPlayerFour, additionalDeckFour);
 
-        System.out.println("Player 1:");
-        userDeckPlayerOne = prepareUserDeck(userDeckPlayerOne, additionalDeckFour);
-        System.out.println("Player 2:");
-        userDeckPlayerTwo = prepareUserDeck(userDeckPlayerTwo, additionalDeckOne);
-        System.out.println("Player 3:");
-        userDeckPlayerThree = prepareUserDeck(userDeckPlayerThree, additionalDeckTwo);
-        System.out.println("Player 4:");
-        userDeckPlayerFour = prepareUserDeck(userDeckPlayerFour, additionalDeckThree);
+        System.out.println("Player 1, see your cards:");
+        prepareUserDeck(userDeckPlayerOne, additionalDeckFour);
+        System.out.println("Player 2, see your cards:");
+        prepareUserDeck(userDeckPlayerTwo, additionalDeckOne);
+        System.out.println("Player 3, see your cards:");
+        prepareUserDeck(userDeckPlayerThree, additionalDeckTwo);
+        System.out.println("Player 4, see your cards:");
+        prepareUserDeck(userDeckPlayerFour, additionalDeckThree);
 
+        while (stack.size() < 52) {
+            System.out.println("Player 1");
+            playAGame(userDeckPlayerOne);
+            System.out.println("Player 2");
+            playAGame(userDeckPlayerTwo);
+            System.out.println("Player 3");
+            playAGame(userDeckPlayerThree);
+            System.out.println("Player 4");
+            playAGame(userDeckPlayerFour);
+        }
     }
 
     public static ArrayList<Card> createDeck() {
@@ -106,9 +117,27 @@ public class Hearts {
         userDeck.removeAll(additionalDeck);
     }
 
-    public static ArrayList<Card> prepareUserDeck(ArrayList<Card> userDeck, ArrayList<Card> additionalDeck) {
+    public static void prepareUserDeck(ArrayList<Card> userDeck, ArrayList<Card> additionalDeck) {
         userDeck.addAll(additionalDeck);
         System.out.println(userDeck);
-        return userDeck;
+    }
+
+    public static void playAGame(ArrayList<Card> userDeck) {
+        Scanner scan = new Scanner(System.in);
+        boolean correctTurn = false;
+        do {
+            System.out.println("Put suitable card. If you don't have put any card: ");
+            System.out.print("\tSuit: ");
+            String suit = scan.next();
+            System.out.print("\tRank: ");
+            String rank = scan.next();
+            for (int i = 0; i < userDeck.size(); i++) {
+                if (userDeck.get(i).suit.equalsIgnoreCase(suit) && userDeck.get(i).rank.equalsIgnoreCase(rank)) {
+                    stack.add(userDeck.remove(i));
+                    correctTurn = true;
+                }
+            }
+        } while (!correctTurn);
+        System.out.println(stack);
     }
 }
