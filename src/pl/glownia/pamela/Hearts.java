@@ -140,4 +140,17 @@ public class Hearts {
         } while (!correctTurn);
         System.out.println(stack);
     }
+
+    public static int countPoints(ArrayList<Card> userDeck) {
+        int points = 0;
+        for (int i = 0; i < userDeck.size(); i++) {
+            if (userDeck.get(i).suit.equalsIgnoreCase("hearts")) {
+                points += 1;
+            }
+            if (userDeck.get(i).suit.equalsIgnoreCase("spades") && userDeck.get(i).rank.equalsIgnoreCase("queen")) {
+                points += 13;
+            }
+        }
+        return points;
+    }
 }
