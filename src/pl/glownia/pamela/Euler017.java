@@ -6,7 +6,11 @@ public class Euler017 {
     static String[] tens = {"twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"};
 
     public static void main(String[] args) {
-        System.out.println(countLetters(952));
+        int sum = 0;
+        for (int i = 1; i <= 1000; i++) {
+            sum += countLetters(i);
+        }
+        System.out.println(sum);
     }
 
     static int countOnes(int n) {
@@ -70,13 +74,11 @@ public class Euler017 {
     }
 
     static int countLetters(int n) {
+        int hundredWord, tenWord, teenWord, oneWord;
         int sum = 0;
         if (n < 0 || n > 1000) {
             System.out.println("You number is not correct. Choose number from 0 to 1000.");
         }
-
-
-        int hundredWord, tenWord, teenWord, oneWord;
         if (n == 1000) {
             sum += countThousand();
         }
@@ -93,14 +95,13 @@ public class Euler017 {
             sum += tenWord;
         }
         if (n >= 10 && n < 20) {
-            teenWord = countTeens(n / 10);
+            teenWord = countTeens(n - 10);
             sum += teenWord;
         }
         if (n >= 0 && n < 10) {
             oneWord = countOnes(n);
             sum += oneWord;
         }
-
         return sum;
     }
 }
